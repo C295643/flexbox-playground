@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { generateRandomSize } from '@/utils/helpers';
-import { StyleDisplay } from '@/components/StyleDisplay';
+import { useState, useEffect } from "react";
+import { generateRandomSize } from "@/utils/helpers";
+import { StyleDisplay } from "@/components/StyleDisplay";
 
 export default function Home() {
-  const [containerStyle, setContainerStyle] = useState('');
-  const [item1Style, setItem1Style] = useState('');
-  const [item2Style, setItem2Style] = useState('');
-  const [item3Style, setItem3Style] = useState('');
+  const [containerStyle, setContainerStyle] = useState("");
+  const [item1Style, setItem1Style] = useState("");
+  const [item2Style, setItem2Style] = useState("");
+  const [item3Style, setItem3Style] = useState("");
   const [randomSizes, setRandomSizes] = useState([{}, {}, {}]);
 
   useEffect(() => {
@@ -22,8 +22,8 @@ export default function Home() {
   const applyCustomStyles = (styleString: string): Record<string, string> => {
     try {
       const styleObject: Record<string, string> = {};
-      styleString.split(';').forEach((style) => {
-        const [property, value] = style.split(':').map((s) => s.trim());
+      styleString.split(";").forEach((style) => {
+        const [property, value] = style.split(":").map((s) => s.trim());
         if (property && value) {
           styleObject[property] = value;
         }
@@ -34,37 +34,55 @@ export default function Home() {
     }
   };
 
+  const handleInputChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setter(e.target.value);
+    };
+
   const baseStyle1: Record<string, string> = {
-    backgroundColor: 'lightcoral'
-  }
+    backgroundColor: "lightcoral",
+  };
   const baseStyle2: Record<string, string> = {
-    backgroundColor: 'lightgrey'
-  }
+    backgroundColor: "lightgrey",
+  };
   const baseStyle3: Record<string, string> = {
-    backgroundColor: 'lightgreen'
-  }
+    backgroundColor: "lightgreen",
+  };
 
   return (
     <main className="container">
-      <div 
+      <div
         className="flex-container"
         style={{ ...applyCustomStyles(containerStyle) }}
       >
-        <div 
+        <div
           className="flex-item"
-          style={{ ...randomSizes[0], ...applyCustomStyles(item1Style), ...baseStyle1 }}
+          style={{
+            ...randomSizes[0],
+            ...applyCustomStyles(item1Style),
+            ...baseStyle1,
+          }}
         >
           Item 1
         </div>
-        <div 
+        <div
           className="flex-item"
-          style={{ ...randomSizes[1], ...applyCustomStyles(item2Style), ...baseStyle2 }}
+          style={{
+            ...randomSizes[1],
+            ...applyCustomStyles(item2Style),
+            ...baseStyle2,
+          }}
         >
           Item 2
         </div>
-        <div 
+        <div
           className="flex-item"
-          style={{ ...randomSizes[2], ...applyCustomStyles(item3Style), ...baseStyle3 }}
+          style={{
+            ...randomSizes[2],
+            ...applyCustomStyles(item3Style),
+            ...baseStyle3,
+          }}
         >
           Item 3
         </div>
@@ -76,12 +94,13 @@ export default function Home() {
           <textarea
             id="container-style"
             value={containerStyle}
-            onChange={(e) => setContainerStyle(e.target.value)}
+            // onChange={(e) => setContainerStyle(e.target.value)}
+            onChange={handleInputChange(setContainerStyle)}
             placeholder="Example: justify-content: space-between; align-items: center;"
           />
           <StyleDisplay styles={containerStyle} />
         </div>
-        
+
         <div className="control-group">
           <label htmlFor="item1-style">Item 1 Styles:</label>
           <textarea

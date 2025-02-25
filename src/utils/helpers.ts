@@ -1,9 +1,6 @@
-export const generateRandomSize = () => {
-  const width = Math.floor(Math.random() * (300 - 100) + 100);
-  const height = Math.floor(Math.random() * (200 - 100) + 100);
-  
+export function generateRandomSize() {
   return {
-    width: `${width}px`,
-    height: `${height}px`,
+    width: Math.floor(Math.random() * 100) + 50,
+    height: Math.floor(Math.random() * 100) + 50,
   };
-};
+}

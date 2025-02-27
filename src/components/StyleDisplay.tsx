@@ -1,26 +1,29 @@
 import React from "react";
+import styles from "./StyleDisplay.module.css";
 
 interface StyleDisplayProps {
-  styles: string;
+  inputStyles: string;
 }
 
-export function StyleDisplay({ styles }: StyleDisplayProps) {
-  const styleList = styles
+export function StyleDisplay({ inputStyles }: StyleDisplayProps) {
+  const styleList = inputStyles
     .split(";")
-    .map((style) => style.trim())
-    .filter((style) => style.length > 0);
+    .map((inputStyle) => inputStyle.trim())
+    .filter((inputStyle) => inputStyle.length > 0);
 
   if (styleList.length === 0) {
     return (
-      <p className="style-display style-display--empty">No styles applied</p>
+      <p className={[styles.styleDisplay, styles.styleDisplayEmpty].join(" ")}>
+        No styles applied
+      </p>
     );
   }
 
   return (
-    <div className="style-display">
-      {styleList.map((style, index) => (
-        <div key={index} className="style-display__item">
-          {style}
+    <div className={`${styles.styleDisplay}`}>
+      {styleList.map((styleItem, index) => (
+        <div key={index} className={`${styles.styleDisplayItem}`}>
+          {styleItem}
         </div>
       ))}
     </div>

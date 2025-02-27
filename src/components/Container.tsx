@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ContainerResetClass, ContainerType } from "@/types/Container";
+import styles from "./Container.module.css";
+import {
+  backgroundColors,
+  generateRandomColor,
+} from "@/utils/helpers";
 
 type ContainerProps = {
-  className?: string;
-  size?: {
-    width: number;
-    height: number;
-  };
+  containerType?: ContainerType;
   customStyles: string;
-  baseStyle: Record<string, string>;
   children: React.ReactNode;
 };
 
@@ -35,20 +36,37 @@ const applyCustomStyles = (styleString: string): Record<string, string> => {
 };
 
 const Container: React.FC<ContainerProps> = ({
-  className = "flex-item",
-  size,
+  containerType = ContainerType.ITEM,
   customStyles,
-  baseStyle,
   children,
 }) => {
+  const containerResetClass = ContainerResetClass[containerType];
+  const [baseStyles, setBaseStyles] = useState<React.CSSProperties>({});
+
+  const [doubleClicked, setDoubleClicked] = useState(false);
+
+  // Initial styles
+  useEffect(() => {
+    const bgColor = backgroundColors[containerType] || { backgroundColor: generateRandomColor()};
+    setBaseStyles((prev) => ({ ...prev, ...bgColor }));
+  }, []);
+
+  const handleDoubleClick = () => {
+    setDoubleClicked(!doubleClicked);
+    console.log("--------------- !doubleClicked");
+  };
+
   const combinedStyles = {
-    ...baseStyle,
+    ...baseStyles,
     ...applyCustomStyles(customStyles),
-    ...(size ? { width: `${size.width}px`, height: `${size.height}px` } : {}),
   };
 
   return (
-    <div className={className} style={combinedStyles}>
+    <div
+      className={`${styles[containerResetClass]}`}
+      style={combinedStyles}
+      onDoubleClick={handleDoubleClick}
+    >
       {children}
     </div>
   );

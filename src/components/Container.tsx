@@ -44,6 +44,7 @@ const Container: React.FC<ContainerProps> = ({
   const [baseStyles, setBaseStyles] = useState<React.CSSProperties>({});
 
   const [doubleClicked, setDoubleClicked] = useState(false);
+  const [rightClicked, setRightClicked] = useState(false);
 
   // Initial styles
   useEffect(() => {
@@ -54,6 +55,13 @@ const Container: React.FC<ContainerProps> = ({
   const handleDoubleClick = () => {
     setDoubleClicked(!doubleClicked);
     console.log("--------------- !doubleClicked");
+  };
+  
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setRightClicked(!rightClicked);
+    console.log("--------------- Right-click detected");
+    // Handle right-click event here
   };
 
   const combinedStyles = {
@@ -66,6 +74,7 @@ const Container: React.FC<ContainerProps> = ({
       className={`${styles[containerResetClass]}`}
       style={combinedStyles}
       onDoubleClick={handleDoubleClick}
+      onContextMenu={handleContextMenu}
     >
       {children}
     </div>

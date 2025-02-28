@@ -6,6 +6,7 @@ import Container from "@/components/Container";
 import { ContainerType } from "@/types/Container";
 import styles from "./page.module.css";
 import CustomModal from "@/components/Modal";
+import CustomOffcanvas from "@/components/Offcanvas";
 
 export default function Home() {
   const [containerStyle, setContainerStyle] = useState("");
@@ -20,6 +21,25 @@ export default function Home() {
 
   const [showOffcanvas, setShowOffcanvas] = useState(false);
 
+  const [offcanvasIndex, setOffcanvasIndex] = useState<number | null>(null);
+  const [containerType, setContainerType] = useState<ContainerType | null>(
+    null
+  );
+  const [activeContainerGroup, setActiveContainerGroup] =
+    useState<ContainerGroup | null>(null);
+
+  const handleShowOffcanvas = (
+    index: number,
+    containerType: ContainerType,
+    activeContainerGroup: ContainerGroup
+  ) => {
+    setOffcanvasIndex(index);
+    setContainerType(containerType);
+    setActiveContainerGroup(activeContainerGroup);
+    setShowOffcanvas(true);
+  };
+  const handleCloseOffcanvas = () => setShowOffcanvas(false);
+
   return (
     <main className={styles.mainContainer} style={{ border: "dashed 4px red" }}>
       <div className={styles.wrapperContainer}>
@@ -27,6 +47,14 @@ export default function Home() {
           Info container
           <button onClick={handleShowModal} className="btn btn-secondary">
             Show Modal
+          </button>
+          <button
+            onClick={() =>
+              handleShowOffcanvas(0, ContainerType.MAIN, initialContainerGroup)
+            }
+            className="btn btn-secondary"
+          >
+            Show Initial Group Index
           </button>
         </div>
         <Container
@@ -93,6 +121,13 @@ export default function Home() {
         show={showModal}
         handleClose={handleCloseModal}
         index={0} // Assuming the index of initialContainerGroup is 0
+      />
+      <CustomOffcanvas
+        show={showOffcanvas}
+        handleClose={handleCloseOffcanvas}
+        containerType={containerType} // Pass the index to the offcanvas
+        index={offcanvasIndex} // Pass the index to the offcanvas
+        containerGroup={activeContainerGroup} // Pass the active container group to the offcanvas
       />
     </main>
   );

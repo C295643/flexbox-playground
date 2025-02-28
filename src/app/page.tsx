@@ -8,6 +8,21 @@ import styles from "./page.module.css";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
 
+type ContainerDefinition = {
+  type: ContainerType;
+  customStyles: string;
+};
+
+type ControlDefinition = {
+  type: string;
+};
+
+export type ContainerGroup = {
+  container: ContainerDefinition;
+  control: ControlDefinition;
+  containers: ContainerGroup[];
+};
+
 export default function Home() {
   const [containerStyle, setContainerStyle] = useState("");
   const [item1Style, setItem1Style] = useState("");

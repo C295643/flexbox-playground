@@ -5,6 +5,7 @@ import { StyleDisplay } from "@/components/StyleDisplay";
 import Container from "@/components/Container";
 import { ContainerType } from "@/types/Container";
 import styles from "./page.module.css";
+import CustomModal from "@/components/Modal";
 
 export default function Home() {
   const [containerStyle, setContainerStyle] = useState("");
@@ -12,11 +13,21 @@ export default function Home() {
   const [item2Style, setItem2Style] = useState("");
   const [item3Style, setItem3Style] = useState("");
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+
   return (
     <main className={styles.mainContainer} style={{ border: "dashed 4px red" }}>
       <div className={styles.wrapperContainer}>
         <div className="info-container" style={{ border: "dashed 4px orange" }}>
           Info container
+          <button onClick={handleShowModal} className="btn btn-secondary">
+            Show Modal
+          </button>
         </div>
         <Container
           containerType={ContainerType.MAIN}
@@ -78,6 +89,11 @@ export default function Home() {
           <StyleDisplay inputStyles={item3Style} />
         </div>
       </div>
+      <CustomModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        index={0} // Assuming the index of initialContainerGroup is 0
+      />
     </main>
   );
 }

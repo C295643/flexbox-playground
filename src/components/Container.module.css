@@ -4,6 +4,9 @@
   flex: 1;
   border-radius: 8px;
   border: dashed 2px red;
+
+  padding: 10px;
+  margin: 10px;
 }
 
 .item {
@@ -13,6 +16,9 @@
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+
+  padding: 10px;
+  margin: 10px;
 }
 .item:hover {
   transform: translateY(-2px);
@@ -23,6 +29,9 @@
   font-size: 18px;
   border-radius: 8px;
   border: dashed 2px red;
+
+  padding: 10px;
+  margin: 10px;
 }
 .container:hover {
   transform: translateY(-2px);

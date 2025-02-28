@@ -9,16 +9,17 @@ import { usePrevious } from "@/hooks/usePrevious";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
 
-type ContainerDefinition = {
+export type ContainerDefinition = {
   type: ContainerType;
   customStyles: string;
 };
 
-type ControlDefinition = {
+export type ControlDefinition = {
   type: string;
 };
 
 export type ContainerGroup = {
+  id: number;
   container: ContainerDefinition;
   control: ControlDefinition;
   containers: ContainerGroup[];
@@ -31,24 +32,29 @@ export default function Home() {
   const [item3Style, setItem3Style] = useState("");
 
   const initialContainerGroup: ContainerGroup = {
+    id: 0,
     container: { type: ContainerType.MAIN, customStyles: "" },
     control: { type: "control" },
     containers: [
       {
+        id: 1,
         container: { type: ContainerType.ITEM, customStyles: "" },
         control: { type: "control" },
         containers: [],
       },
       {
+        id: 2,
         container: { type: ContainerType.CONTAINER, customStyles: "" },
         control: { type: "control" },
         containers: [
           {
+            id: 3,
             container: { type: ContainerType.ITEM, customStyles: "" },
             control: { type: "control" },
             containers: [],
           },
           {
+            id: 4,
             container: { type: ContainerType.ITEM, customStyles: "" },
             control: { type: "control" },
             containers: [],
@@ -59,6 +65,7 @@ export default function Home() {
   };
 
   const newContainerGroup: ContainerGroup = {
+    id: 5,
     container: { type: ContainerType.ITEM, customStyles: "" },
     control: { type: "new control" },
     containers: [],
@@ -76,8 +83,9 @@ export default function Home() {
     return (
       <Container
         key={index}
-        containerType={group.container.type}
         customStyles={group.container.customStyles}
+        groupId={group.id}
+        groupContainer={group.container}
       >
         {isContainer && `Container ${index}`}
         {isItem && `Item ${index}`}
@@ -167,8 +175,9 @@ export default function Home() {
         {containerGroup.map((group, index) => (
           <Container
             key={index}
-            containerType={group.container.type}
             customStyles={group.container.customStyles}
+            groupId={group.id}
+            groupContainer={group.container}
           >
             Main Container
             {group.containers.map((group, index) =>

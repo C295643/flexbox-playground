@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { ContainerResetClass, ContainerType } from "@/types/Container";
+import { ContainerResetClass } from "@/types/Container";
 import styles from "./Container.module.css";
-import {
-  backgroundColors,
-  generateRandomColor,
-} from "@/utils/helpers";
+import { backgroundColors, generateRandomColor } from "@/utils/helpers";
+import { ContainerDefinition } from "@/app/page";
 
 type ContainerProps = {
-  containerType?: ContainerType;
   customStyles: string;
   children: React.ReactNode;
+  groupId: number;
+  groupContainer: ContainerDefinition;
 };
 
 const applyCustomStyles = (styleString: string): Record<string, string> => {
@@ -36,11 +35,12 @@ const applyCustomStyles = (styleString: string): Record<string, string> => {
 };
 
 const Container: React.FC<ContainerProps> = ({
-  containerType = ContainerType.ITEM,
   customStyles,
   children,
+  groupId,
+  groupContainer,
 }) => {
-  const containerResetClass = ContainerResetClass[containerType];
+  const containerResetClass = ContainerResetClass[groupContainer.type];
   const [baseStyles, setBaseStyles] = useState<React.CSSProperties>({});
 
   const [doubleClicked, setDoubleClicked] = useState(false);
@@ -48,7 +48,9 @@ const Container: React.FC<ContainerProps> = ({
 
   // Initial styles
   useEffect(() => {
-    const bgColor = backgroundColors[containerType] || { backgroundColor: generateRandomColor()};
+    const bgColor = backgroundColors[groupContainer.type] || {
+      backgroundColor: generateRandomColor(),
+    };
     setBaseStyles((prev) => ({ ...prev, ...bgColor }));
   }, []);
 
@@ -56,7 +58,7 @@ const Container: React.FC<ContainerProps> = ({
     setDoubleClicked(!doubleClicked);
     console.log("--------------- !doubleClicked");
   };
-  
+
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     setRightClicked(!rightClicked);
@@ -76,6 +78,8 @@ const Container: React.FC<ContainerProps> = ({
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
     >
+      <p>groupContainer.type: {groupContainer.type}</p>
+      <p>groupId: {groupId}</p>
       {children}
     </div>
   );

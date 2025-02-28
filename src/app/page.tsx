@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleDisplay } from "@/components/StyleDisplay";
 import Container from "@/components/Container";
 import { ContainerType } from "@/types/Container";
 import styles from "./page.module.css";
+import { usePrevious } from "@/hooks/usePrevious";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
 
@@ -28,6 +29,88 @@ export default function Home() {
   const [item1Style, setItem1Style] = useState("");
   const [item2Style, setItem2Style] = useState("");
   const [item3Style, setItem3Style] = useState("");
+
+  const initialContainerGroup: ContainerGroup = {
+    container: { type: ContainerType.MAIN, customStyles: "" },
+    control: { type: "control" },
+    containers: [
+      {
+        container: { type: ContainerType.ITEM, customStyles: "" },
+        control: { type: "control" },
+        containers: [],
+      },
+      {
+        container: { type: ContainerType.CONTAINER, customStyles: "" },
+        control: { type: "control" },
+        containers: [
+          {
+            container: { type: ContainerType.ITEM, customStyles: "" },
+            control: { type: "control" },
+            containers: [],
+          },
+          {
+            container: { type: ContainerType.ITEM, customStyles: "" },
+            control: { type: "control" },
+            containers: [],
+          },
+        ],
+      },
+    ],
+  };
+
+  const newContainerGroup: ContainerGroup = {
+    container: { type: ContainerType.ITEM, customStyles: "" },
+    control: { type: "new control" },
+    containers: [],
+  };
+
+  const [containerGroup, setContainerGroup] = useState([initialContainerGroup]);
+
+  const prevContainerGroup = usePrevious(containerGroup);
+
+  const creatComponent = (group: ContainerGroup, index: number) => {
+    console.log("--------------- group: ", group);
+
+    const isContainer = group.container.type === ContainerType.CONTAINER;
+    const isItem = group.container.type === ContainerType.ITEM;
+    return (
+      <Container
+        key={index}
+        containerType={group.container.type}
+        customStyles={group.container.customStyles}
+      >
+        {isContainer && `Container ${index}`}
+        {isItem && `Item ${index}`}
+        {group.containers.map((containerGroup, index) =>
+          creatComponent(containerGroup, index)
+        )}
+      </Container>
+    );
+  };
+
+  useEffect(() => {
+    if (containerGroup.length === 1) {
+      console.log("--------------- INITIAL containerGroup: ", containerGroup);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (prevContainerGroup) {
+      containerGroup.forEach((group, index) => {
+        if (group !== prevContainerGroup[index]) {
+          console.log(
+            `---------- Container group at index ${index} has changed`
+          );
+          // Run your process here
+          console.log("--------------- containerGroup: ", containerGroup);
+        }
+      });
+    }
+  }, [containerGroup, prevContainerGroup]);
+
+  const handleAddContainerGroup = () => {
+    setContainerGroup((prev) => [...prev, newContainerGroup]);
+  };
 
   const [showModal, setShowModal] = useState(false);
 
@@ -56,10 +139,19 @@ export default function Home() {
   const handleCloseOffcanvas = () => setShowOffcanvas(false);
 
   return (
-    <main className={styles.mainContainer} style={{ border: "dashed 4px red" }}>
-      <div className={styles.wrapperContainer}>
-        <div className="info-container" style={{ border: "dashed 4px orange" }}>
+    <main
+      className={`${styles.mainContainer} container`}
+      style={{ border: "dashed 4px red" }}
+    >
+      <div className={`${styles.wrapperContainer}`}>
+        <div
+          className="info-container col-12"
+          style={{ border: "dashed 4px orange" }}
+        >
           Info container
+          <button onClick={handleAddContainerGroup} className="btn btn-primary">
+            Add Container Group
+          </button>
           <button onClick={handleShowModal} className="btn btn-secondary">
             Show Modal
           </button>
@@ -72,23 +164,25 @@ export default function Home() {
             Show Initial Group Index
           </button>
         </div>
-        <Container
-          containerType={ContainerType.MAIN}
-          customStyles={containerStyle}
-        >
-          <Container customStyles={item1Style}>Item 1</Container>
+        {containerGroup.map((group, index) => (
           <Container
-            containerType={ContainerType.CONTAINER}
-            customStyles={item2Style}
+            key={index}
+            containerType={group.container.type}
+            customStyles={group.container.customStyles}
           >
-            Item 2
+            Main Container
+            {group.containers.map((group, index) =>
+              creatComponent(group, index)
+            )}
           </Container>
-          <Container customStyles={item3Style}>Item 3</Container>
-        </Container>
+        ))}
       </div>
 
-      <div className={styles.controls} style={{ border: "dashed 4px fuchsia" }}>
-        <div className={styles.controlGroup}>
+      <div
+        className={`${styles.controls} col-12`}
+        style={{ border: "dashed 4px fuchsia" }}
+      >
+        <div id="control-group-1" className={`${styles.controlGroup} mb-3`}>
           <label htmlFor="container-style">Container Styles:</label>
           <textarea
             id="container-style"
@@ -99,7 +193,7 @@ export default function Home() {
           <StyleDisplay inputStyles={containerStyle} />
         </div>
 
-        <div className={styles.controlGroup}>
+        <div id="control-group-2" className={`${styles.controlGroup} mb-3`}>
           <label htmlFor="item1-style">Item 1 Styles:</label>
           <textarea
             id="item1-style"
@@ -110,7 +204,7 @@ export default function Home() {
           <StyleDisplay inputStyles={item1Style} />
         </div>
 
-        <div className={styles.controlGroup}>
+        <div id="control-group-3" className={`${styles.controlGroup} mb-3`}>
           <label htmlFor="item2-style">Item 2 Styles:</label>
           <textarea
             id="item2-style"
@@ -121,7 +215,7 @@ export default function Home() {
           <StyleDisplay inputStyles={item2Style} />
         </div>
 
-        <div className={styles.controlGroup}>
+        <div id="control-group-4" className={`${styles.controlGroup} mb-3`}>
           <label htmlFor="item3-style">Item 3 Styles:</label>
           <textarea
             id="item3-style"

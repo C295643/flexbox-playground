@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { StyleDisplay } from "@/components/StyleDisplay";
 import Container from "@/components/Container";
-import { ContainerType } from "@/types/Container";
-import styles from "./page.module.css";
-import { usePrevious } from "@/hooks/usePrevious";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
+import { StyleDisplay } from "@/components/StyleDisplay";
+import { ContainerType } from "@/types/Container";
+import { useNextId } from "@/hooks/useNextId";
+import { usePrevious } from "@/hooks/usePrevious";
+import {
+  findContainerGroupById,
+  addContainerGroupById,
+  deleteContainerGroupById,
+} from "@/utils/containerUtils";
+import styles from "./page.module.css";
 
 export type ContainerDefinition = {
   type: ContainerType;
@@ -26,81 +32,52 @@ export type ContainerGroup = {
 };
 
 export default function Home() {
+  const INITIAL_VALUE = 3;
+  // Custom hook to get the getNextId function
+  const getNextId = useNextId(INITIAL_VALUE);
+
   const [containerStyle, setContainerStyle] = useState("");
   const [item1Style, setItem1Style] = useState("");
   const [item2Style, setItem2Style] = useState("");
   const [item3Style, setItem3Style] = useState("");
 
-  const initialContainerGroup: ContainerGroup = {
-    id: 0,
-    container: { type: ContainerType.MAIN, customStyles: "" },
-    control: { type: "control" },
-    containers: [
-      {
-        id: 1,
-        container: { type: ContainerType.ITEM, customStyles: "" },
-        control: { type: "control" },
-        containers: [],
-      },
-      {
-        id: 2,
-        container: { type: ContainerType.CONTAINER, customStyles: "" },
-        control: { type: "control" },
-        containers: [
-          {
-            id: 3,
-            container: { type: ContainerType.ITEM, customStyles: "" },
-            control: { type: "control" },
-            containers: [],
-          },
-          {
-            id: 4,
-            container: { type: ContainerType.ITEM, customStyles: "" },
-            control: { type: "control" },
-            containers: [],
-          },
-        ],
-      },
-    ],
-  };
-
-  const newContainerGroup: ContainerGroup = {
-    id: 5,
-    container: { type: ContainerType.ITEM, customStyles: "" },
-    control: { type: "new control" },
-    containers: [],
-  };
-
-  const [containerGroup, setContainerGroup] = useState([initialContainerGroup]);
-
+  const [containerGroup, setContainerGroup] = useState<ContainerGroup[]>([{
+      id: 0,
+      container: { type: ContainerType.MAIN, customStyles: "" },
+      control: { type: "control" },
+      containers: [
+        {
+          id: 1,
+          container: { type: ContainerType.CONTAINER, customStyles: "" },
+          control: { type: "control" },
+          containers: [
+            {
+              id: 2,
+              container: { type: ContainerType.ITEM, customStyles: "" },
+              control: { type: "control" },
+              containers: [],
+            },
+          ],
+        },
+      ],
+    }]);
   const prevContainerGroup = usePrevious(containerGroup);
 
-  const creatComponent = (group: ContainerGroup, index: number) => {
-    console.log("--------------- group: ", group);
-
-    const isContainer = group.container.type === ContainerType.CONTAINER;
-    const isItem = group.container.type === ContainerType.ITEM;
+  const creatContainer = (group: ContainerGroup) => {
     return (
       <Container
-        key={index}
+        key={group.id}
         customStyles={group.container.customStyles}
         groupId={group.id}
         groupContainer={group.container}
+        handleShowOffcanvas={handleShowOffcanvas}
       >
-        {isContainer && `Container ${index}`}
-        {isItem && `Item ${index}`}
-        {group.containers.map((containerGroup, index) =>
-          creatComponent(containerGroup, index)
+        {group.containers.map((containerGroup) =>
+          creatContainer(containerGroup)
         )}
       </Container>
     );
   };
-
-  useEffect(() => {
-    if (containerGroup.length === 1) {
-      console.log("--------------- INITIAL containerGroup: ", containerGroup);
-    }
-  }, []);
 
   useEffect(() => {
     if (prevContainerGroup) {
@@ -116,8 +93,41 @@ export default function Home() {
     }
   }, [containerGroup, prevContainerGroup]);
 
-  const handleAddContainerGroup = () => {
-    setContainerGroup((prev) => [...prev, newContainerGroup]);
+  const handleAddContainerGroup = (groupId: number) => {
+    const newContainerGroup: ContainerGroup = {
+      id: getNextId(),
+      container: { type: ContainerType.ITEM, customStyles: "" },
+      control: { type: "new control" },
+      containers: [],
+    };
+
+    const updatedContainerGroup = addContainerGroupById(
+      containerGroup,
+      groupId,
+      newContainerGroup
+    );
+
+    if (updatedContainerGroup) {
+      setContainerGroup(updatedContainerGroup);
+    } else {
+      console.warn("⚠️ Container group not added");
+      return;
+    }
+  };
+
+  const handleDeleteContainerGroup = (groupId: number) => {
+    const updatedContainerGroup = deleteContainerGroupById(
+      containerGroup,
+      groupId
+    );
+
+    if (updatedContainerGroup) {
+      setContainerGroup(updatedContainerGroup);
+    } else {
+      console.warn("⚠️ Container group not deleted");
+    }
+
+    handleCloseOffcanvas();
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -126,47 +136,37 @@ export default function Home() {
   const handleCloseModal = () => setShowModal(false);
 
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [offcanvasContainerGroup, setOffcanvasContainerGroup] = useState<
+    ContainerGroup | undefined
+  >(undefined);
 
-  const [offcanvasIndex, setOffcanvasIndex] = useState<number | null>(null);
-  const [containerType, setContainerType] = useState<ContainerType | null>(
-    null
-  );
-  const [activeContainerGroup, setActiveContainerGroup] =
-    useState<ContainerGroup | null>(null);
-
-  const handleShowOffcanvas = (
-    index: number,
-    containerType: ContainerType,
-    activeContainerGroup: ContainerGroup
-  ) => {
-    setOffcanvasIndex(index);
-    setContainerType(containerType);
-    setActiveContainerGroup(activeContainerGroup);
-    setShowOffcanvas(true);
+  const handleShowOffcanvas = (index: number) => {
+    const containerGroupFound = findContainerGroupById(containerGroup, index);
+    if (containerGroupFound) {
+      setOffcanvasContainerGroup(containerGroupFound);
+      setShowOffcanvas(true);
+    } else {
+      console.warn("⚠️ Container group not found");
+    }
   };
   const handleCloseOffcanvas = () => setShowOffcanvas(false);
 
   return (
-    <main
-      className={`${styles.mainContainer} container`}
-      style={{ border: "dashed 4px red" }}
-    >
-      <div className={`${styles.wrapperContainer}`}>
-        <div
-          className="info-container col-12"
-          style={{ border: "dashed 4px orange" }}
-        >
+    <main className={`${styles.mainContainer} p-3 container`}>
+      <div className={`${styles.wrapperContainer} p-4`}>
+        <div className={`${styles.infoContainer} col-12 p-3`}>
           Info container
-          <button onClick={handleAddContainerGroup} className="btn btn-primary">
+          <button
+            onClick={() => handleAddContainerGroup(0)}
+            className="btn btn-primary"
+          >
             Add Container Group
           </button>
           <button onClick={handleShowModal} className="btn btn-secondary">
             Show Modal
           </button>
           <button
-            onClick={() =>
-              handleShowOffcanvas(0, ContainerType.MAIN, initialContainerGroup)
-            }
+            onClick={() => handleShowOffcanvas(0)}
             className="btn btn-secondary"
           >
             Show Initial Group Index
@@ -178,10 +178,11 @@ export default function Home() {
             customStyles={group.container.customStyles}
             groupId={group.id}
             groupContainer={group.container}
+            handleShowOffcanvas={handleShowOffcanvas}
           >
-            Main Container
-            {group.containers.map((group, index) =>
-              creatComponent(group, index)
+            <p>Main Container</p>
+            {group.containers.map((group) =>
+              creatContainer(group)
             )}
           </Container>
         ))}
@@ -243,9 +244,9 @@ export default function Home() {
       <CustomOffcanvas
         show={showOffcanvas}
         handleClose={handleCloseOffcanvas}
-        containerType={containerType} // Pass the index to the offcanvas
-        index={offcanvasIndex} // Pass the index to the offcanvas
-        containerGroup={activeContainerGroup} // Pass the active container group to the offcanvas
+        containerGroup={offcanvasContainerGroup}
+        handleAddContainerGroup={handleAddContainerGroup}
+        handleDeleteContainerGroup={handleDeleteContainerGroup}
       />
     </main>
   );

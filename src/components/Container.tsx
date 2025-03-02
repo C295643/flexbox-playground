@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ContainerResetClass } from "@/types/Container";
+import { ContainerResetClass, ContainerType } from "@/types/Container";
 import styles from "./Container.module.css";
-import { backgroundColors, generateRandomColor } from "@/utils/helpers";
+import { generateRandomColor } from "@/utils/helpers";
 import { ContainerDefinition } from "@/app/page";
 
 type ContainerProps = {
@@ -9,6 +9,7 @@ type ContainerProps = {
   children: React.ReactNode;
   groupId: number;
   groupContainer: ContainerDefinition;
+  handleShowOffcanvas: (index: number) => void;
 };
 
 const applyCustomStyles = (styleString: string): Record<string, string> => {
@@ -39,7 +40,10 @@ const Container: React.FC<ContainerProps> = ({
   children,
   groupId,
   groupContainer,
+  handleShowOffcanvas,
 }) => {
+  const isContainer = groupContainer.type === ContainerType.CONTAINER;
+  const isItem = groupContainer.type === ContainerType.ITEM;
   const containerResetClass = ContainerResetClass[groupContainer.type];
   const [baseStyles, setBaseStyles] = useState<React.CSSProperties>({});
 
@@ -48,22 +52,23 @@ const Container: React.FC<ContainerProps> = ({
 
   // Initial styles
   useEffect(() => {
-    const bgColor = backgroundColors[groupContainer.type] || {
-      backgroundColor: generateRandomColor(),
-    };
+    const bgColor = isItem ? generateRandomColor() : {};
     setBaseStyles((prev) => ({ ...prev, ...bgColor }));
-  }, []);
+  }, [isItem]);
 
-  const handleDoubleClick = () => {
+  const handleDoubleClick = (e: React.MouseEvent, groupId: number) => {
+    e.stopPropagation();
+    console.log("--------------- doubleClicked, groupId: ", groupId);
     setDoubleClicked(!doubleClicked);
-    console.log("--------------- !doubleClicked");
   };
 
-  const handleContextMenu = (event: React.MouseEvent) => {
-    event.preventDefault();
+  // Handle right-click (contextual menu) event
+  const handleContextMenu = (e: React.MouseEvent, groupId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("--------------- Right-click detected, groupId: ", groupId);
     setRightClicked(!rightClicked);
-    console.log("--------------- Right-click detected");
-    // Handle right-click event here
+    handleShowOffcanvas(groupId);
   };
 
   const combinedStyles = {
@@ -73,13 +78,13 @@ const Container: React.FC<ContainerProps> = ({
 
   return (
     <div
-      className={`${styles[containerResetClass]}`}
+      className={`${styles[containerResetClass]} global-container`}
       style={combinedStyles}
-      onDoubleClick={handleDoubleClick}
-      onContextMenu={handleContextMenu}
+      onDoubleClick={(e) => handleDoubleClick(e, groupId)}
+      onContextMenu={(e) => handleContextMenu(e, groupId)}
     >
-      <p>groupContainer.type: {groupContainer.type}</p>
-      <p>groupId: {groupId}</p>
+      <p>{isContainer && `Container ${groupId}`}</p>
+      <p>{isItem && `Item ${groupId}`}</p>
       {children}
     </div>
   );

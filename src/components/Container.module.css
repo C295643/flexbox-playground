@@ -3,16 +3,22 @@
   font-size: 18px;
   flex: 1;
   border-radius: 8px;
-  border: dashed 2px red;
+  background-color: #E8E8E8;
+  border: dashed 8px red;
+
+  padding: 8px;
 }
 
 .item {
   font-size: 18px;
   border-radius: 8px;
-  border: dashed 2px blue;
-
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+
+  padding: 8px;
+  margin: 8px;
+  
+  border: dashed 2px blue;
 }
 .item:hover {
   transform: translateY(-2px);
@@ -22,7 +28,11 @@
 .container {
   font-size: 18px;
   border-radius: 8px;
+  background-color: lightgray;
   border: dashed 2px red;
+
+  padding: 8px;
+  margin: 8px;
 }
 .container:hover {
   transform: translateY(-2px);

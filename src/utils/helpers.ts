@@ -1,5 +1,3 @@
-import { ContainerType } from "@/types/Container";
-
 export function generateRandomSize() {
   return {
     width: Math.floor(Math.random() * 100) + 200,
@@ -7,7 +5,7 @@ export function generateRandomSize() {
   };
 }
 
-export const generateRandomColor = () => {
+export const generateRandomColor = (): React.CSSProperties => {
   const lightColors = [
     "#ff9999",
     "#ffb399",
@@ -36,17 +34,5 @@ export const generateRandomColor = () => {
     "#ff9999",
   ];
   const randomIndex = Math.floor(Math.random() * lightColors.length);
-  return lightColors[randomIndex];
-};
-
-export const backgroundColors: Partial<
-  Record<ContainerType, React.CSSProperties>
-> = {
-  MAIN: { backgroundColor: "#E8E8E8" },
-  CONTAINER: { backgroundColor: "#C0C0C0" },
-};
-
-export const containerBorders: Partial<Record<ContainerType, string>> = {
-  MAIN: "#E8E8E8",
-  CONTAINER: "#C0C0C0",
+  return { backgroundColor: lightColors[randomIndex] };
 };

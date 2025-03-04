@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ContainerResetClass, ContainerType } from "@/types/Container";
 import styles from "./Container.module.css";
-import { generateRandomColor } from "@/utils/helpers";
-import { ContainerDefinition } from "@/app/page";
+import { ContainerGroup } from "@/app/page";
 
 type ContainerProps = {
-  customStyles: string;
   children: React.ReactNode;
-  groupId: number;
-  groupContainer: ContainerDefinition;
+  containerGroup:ContainerGroup
   handleShowOffcanvas: (index: number) => void;
 };
 
@@ -36,25 +33,19 @@ const applyCustomStyles = (styleString: string): Record<string, string> => {
 };
 
 const Container: React.FC<ContainerProps> = ({
-  customStyles,
   children,
-  groupId,
-  groupContainer,
+  containerGroup,
   handleShowOffcanvas,
-}) => {
-  const isContainer = groupContainer.type === ContainerType.CONTAINER;
-  const isItem = groupContainer.type === ContainerType.ITEM;
-  const containerResetClass = ContainerResetClass[groupContainer.type];
-  const [baseStyles, setBaseStyles] = useState<React.CSSProperties>({});
+}: ContainerProps) => {
+  const { id, type, baseStyles, customStyles } = containerGroup;
+  console.log("--------------- baseStyles: ", baseStyles);
+  const isContainer = type === ContainerType.CONTAINER;
+  const isItem = type === ContainerType.ITEM;
+  const containerResetClass = ContainerResetClass[type];
 
   const [doubleClicked, setDoubleClicked] = useState(false);
   const [rightClicked, setRightClicked] = useState(false);
-
-  // Initial styles
-  useEffect(() => {
-    const bgColor = isItem ? generateRandomColor() : {};
-    setBaseStyles((prev) => ({ ...prev, ...bgColor }));
-  }, [isItem]);
+  const [combinedStyles, setCombinedStyles] = useState<React.CSSProperties>({});
 
   const handleDoubleClick = (e: React.MouseEvent, groupId: number) => {
     e.stopPropagation();
@@ -71,20 +62,22 @@ const Container: React.FC<ContainerProps> = ({
     handleShowOffcanvas(groupId);
   };
 
-  const combinedStyles = {
-    ...baseStyles,
-    ...applyCustomStyles(customStyles),
-  };
+  useEffect(() => {
+    setCombinedStyles({
+      ...baseStyles,
+      ...applyCustomStyles(customStyles),
+    });
+  }, [baseStyles, customStyles]);
 
   return (
     <div
       className={`${styles[containerResetClass]} global-container`}
       style={combinedStyles}
-      onDoubleClick={(e) => handleDoubleClick(e, groupId)}
-      onContextMenu={(e) => handleContextMenu(e, groupId)}
+      onDoubleClick={(e) => handleDoubleClick(e, id)}
+      onContextMenu={(e) => handleContextMenu(e, id)}
     >
-      <p>{isContainer && `Container ${groupId}`}</p>
-      <p>{isItem && `Item ${groupId}`}</p>
+      <p>{isContainer && `Container ${id}`}</p>
+      <p>{isItem && `Item ${id}`}</p>
       {children}
     </div>
   );

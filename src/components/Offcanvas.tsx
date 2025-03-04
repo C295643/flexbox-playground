@@ -1,4 +1,5 @@
 import { ContainerGroup } from "@/app/page";
+import { ContainerType } from "@/types/Container";
 import React from "react";
 import { Offcanvas } from "react-bootstrap";
 
@@ -15,7 +16,7 @@ const CustomOffcanvas: React.FC<CustomOffcanvasProps> = ({
   containerGroup,
   handleClose,
   handleAddContainerGroup,
-  handleDeleteContainerGroup
+  handleDeleteContainerGroup,
 }) => {
   if (containerGroup === undefined) {
     return null;
@@ -33,16 +34,18 @@ const CustomOffcanvas: React.FC<CustomOffcanvasProps> = ({
         </Offcanvas.Header>
         <Offcanvas.Body>
           <p>The containerGroup id is: {containerGroup.id}</p>
-          <p>The containerGroup type is: {containerGroup.container.type}</p>
+          <p>The containerGroup type is: {containerGroup.type}</p>
           <button
             onClick={() => handleAddContainerGroup(containerGroup.id)}
             className="btn btn-primary"
           >
-            Add Container Group
+            Add Item
           </button>
           <button
             onClick={() => handleDeleteContainerGroup(containerGroup.id)}
-            className={`btn ${containerGroup.id === 0 ? 'btn-outline-danger' : 'btn-danger'}`}
+            className={`btn ${
+              containerGroup.id === 0 ? "btn-outline-danger" : "btn-danger"
+            }`}
             disabled={containerGroup.id === 0}
           >
             Delete Container Group

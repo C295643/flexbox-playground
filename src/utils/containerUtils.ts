@@ -1,5 +1,5 @@
 import { ContainerGroup } from "@/app/page";
-import { PARENT_BACKGROUND } from "@/constants";
+import { CONTAINER_BORDER, PARENT_BACKGROUND } from "@/constants";
 import { generateRandomColor } from "./helpers";
 
 /**
@@ -52,7 +52,6 @@ export const findContainerGroupById = (
   for (const group of containerGroupClone.containers) {
     const found = findContainerGroupById(group, id);
     if (found) {
-      // console.log("--------------- found: ", found);
       return found; // This exits the findContainerGroupById function and returns the value of found
     }
   }
@@ -106,6 +105,7 @@ export const addContainerGroupById = (
       containerGroup.baseStyles = {
         ...containerGroup.baseStyles,
         ...PARENT_BACKGROUND,
+        ...CONTAINER_BORDER,
       };
     }
     return containerGroup;
@@ -172,14 +172,11 @@ export const updateContainerGroupPropertyById = <
     console.warn("⚠️ Cannot update the ID of a container group");
     return null;
   }
-  console.log("--------------- id: ", id, "   property: ", property, "   value: ", value);
   if (containerGroupClone.id === id) {
     containerGroupClone[property] = value;
-    // console.log("--------------- containerGroupClone: ", containerGroupClone);
     return containerGroupClone;
   }
 
-  // FIXME: This is a bug, it should return the updated containerGroupClone
   for (const group of containerGroupClone.containers) {
     const updated = updateContainerGroupPropertyById(
       group,

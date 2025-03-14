@@ -6,7 +6,7 @@ import {
   updateContainerGroupPropertyById,
 } from "../containerUtils";
 import { ContainerGroup } from "@/app/page";
-import { PARENT_BACKGROUND } from "@/constants";
+import { CONTAINER_BORDER, PARENT_BACKGROUND } from "@/constants";
 
 describe("containerUtils", () => {
   let containerGroup: ContainerGroup;
@@ -29,7 +29,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: PARENT_BACKGROUND,
+          baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },
@@ -64,7 +64,7 @@ describe("containerUtils", () => {
     const result = findParentContainerGroupById(containerGroup, 3);
     expect(result).toEqual({
       id: 2,
-      baseStyles: PARENT_BACKGROUND,
+      baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
       customStyles: {},
       baseClasses: ["container"],
       control: { type: "control" },
@@ -108,7 +108,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: PARENT_BACKGROUND,
+          baseStyles: { ...PARENT_BACKGROUND, ...CONTAINER_BORDER },
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },
@@ -182,7 +182,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: PARENT_BACKGROUND,
+          baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },

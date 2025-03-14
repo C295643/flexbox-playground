@@ -5,7 +5,7 @@ import styles from "./WrapperContainer.module.css";
 import { ContainerGroup } from "@/app/page";
 
 type WrapperContainerProps = {
-  containerGroup: ContainerGroup[];
+  containerGroup: ContainerGroup;
   creatContainer: (group: ContainerGroup) => React.ReactNode;
   handleShowOffcanvas: (index: number) => void;
   handleShowModal: () => void;
@@ -17,6 +17,7 @@ export default function WrapperContainer({
   handleShowOffcanvas,
   handleShowModal,
 }: WrapperContainerProps) {
+  // console.log("--------------- WrapperContainer containerGroup: ", containerGroup);
   return (
     <div className={`${styles.wrapperContainer} p-4`}>
       <div className={`${styles.infoContainer} col-12 p-3`}>
@@ -37,16 +38,14 @@ export default function WrapperContainer({
           Show Initial Group Index
         </button> */}
       </div>
-      {containerGroup.map((group) => (
-        <Container
-          key={group.id}
-          containerGroup={group}
-          handleShowOffcanvas={handleShowOffcanvas}
-        >
-          <p>Main Container</p>
-          {group.containers.map((group) => creatContainer(group))}
-        </Container>
-      ))}
+      <Container
+        key={containerGroup.id}
+        containerGroup={containerGroup}
+        handleShowOffcanvas={handleShowOffcanvas}
+      >
+        <p>Main Container</p>
+        {containerGroup.containers.map((group) => creatContainer(group))}
+      </Container>
     </div>
   );
 }

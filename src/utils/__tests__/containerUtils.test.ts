@@ -1,4 +1,3 @@
-import { ContainerType } from "@/types/Container";
 import {
   findContainerGroupById,
   findParentContainerGroupById,
@@ -7,75 +6,74 @@ import {
   updateContainerGroupPropertyById,
 } from "../containerUtils";
 import { ContainerGroup } from "@/app/page";
+import { PARENT_BACKGROUND } from "@/constants";
 
 describe("containerUtils", () => {
-  let groups: ContainerGroup[];
+  let containerGroup: ContainerGroup;
 
   beforeEach(() => {
-    groups = [
-      {
-        id: 0,
-        type: ContainerType.MAIN,
-        baseStyles: {},
-        customStyles: "",
-        control: { type: "control" },
-        containers: [
-          {
-            id: 1,
-            type: ContainerType.CONTAINER,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [],
-          },
-          {
-            id: 2,
-            type: ContainerType.ITEM,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [
-              {
-                id: 3,
-                type: ContainerType.ITEM,
-                baseStyles: {},
-                customStyles: "",
-                control: { type: "control" },
-                containers: [],
-              },
-            ],
-          },
-        ],
-      },
-    ];
+    containerGroup = {
+      id: 0,
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["main-container"],
+      control: { type: "control" },
+      containers: [
+        {
+          id: 1,
+          baseStyles: { backgroundColor: "white" },
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [],
+        },
+        {
+          id: 2,
+          baseStyles: PARENT_BACKGROUND,
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [
+            {
+              id: 3,
+              baseStyles: { backgroundColor: "white" },
+              customStyles: {},
+              baseClasses: ["container"],
+              control: { type: "control" },
+              containers: [],
+            },
+          ],
+        },
+      ],
+    };
   });
 
   test("findContainerGroupById should find the correct group", () => {
-    const result = findContainerGroupById(groups, 3);
+    const result = findContainerGroupById(containerGroup, 3);
     expect(result).toEqual({
       id: 3,
-      type: ContainerType.ITEM,
-      baseStyles: {},
-      customStyles: "",
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["container"],
       control: { type: "control" },
       containers: [],
     });
   });
 
   test("findParentContainerGroupById should find the correct parent group", () => {
-    const result = findParentContainerGroupById(groups, 3);
+    const result = findParentContainerGroupById(containerGroup, 3);
     expect(result).toEqual({
       id: 2,
-      type: ContainerType.ITEM,
-      baseStyles: {},
-      customStyles: "",
+      baseStyles: PARENT_BACKGROUND,
+      customStyles: {},
+      baseClasses: ["container"],
       control: { type: "control" },
       containers: [
         {
           id: 3,
-          type: ContainerType.ITEM,
-          baseStyles: {},
-          customStyles: "",
+          baseStyles: { backgroundColor: "white" },
+          customStyles: {},
+          baseClasses: ["container"],
           control: { type: "control" },
           containers: [],
         },
@@ -86,123 +84,122 @@ describe("containerUtils", () => {
   test("addContainerGroupById should add a new container group", () => {
     const newGroup = {
       id: 4,
-      type: ContainerType.ITEM,
-      baseStyles: {},
-      customStyles: "",
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["container"],
       control: { type: "control" },
       containers: [],
     };
-    const result = addContainerGroupById(groups, 2, newGroup);
-    expect(result).toEqual([
-      {
-        id: 0,
-        type: ContainerType.MAIN,
-        baseStyles: {},
-        customStyles: "",
-        control: { type: "control" },
-        containers: [
-          {
-            id: 1,
-            type: ContainerType.CONTAINER,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [],
-          },
-          {
-            id: 2,
-            type: ContainerType.ITEM,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [
-              {
-                id: 3,
-                type: ContainerType.ITEM,
-                baseStyles: {},
-                customStyles: "",
-                control: { type: "control" },
-                containers: [],
-              },
-              {
-                id: 4,
-                type: ContainerType.ITEM,
-                baseStyles: {},
-                customStyles: "",
-                control: { type: "control" },
-                containers: [],
-              },
-            ],
-          },
-        ],
-      },
-    ]);
+    const result = addContainerGroupById(containerGroup, 2, newGroup);
+    expect(result).toEqual({
+      id: 0,
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["main-container"],
+      control: { type: "control" },
+      containers: [
+        {
+          id: 1,
+          baseStyles: { backgroundColor: "white" },
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [],
+        },
+        {
+          id: 2,
+          baseStyles: PARENT_BACKGROUND,
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [
+            {
+              id: 3,
+              baseStyles: { backgroundColor: "white" },
+              customStyles: {},
+              baseClasses: ["container"],
+              control: { type: "control" },
+              containers: [],
+            },
+            {
+              id: 4,
+              baseStyles: { backgroundColor: "white" },
+              customStyles: {},
+              baseClasses: ["container"],
+              control: { type: "control" },
+              containers: [],
+            },
+          ],
+        },
+      ],
+    });
   });
 
   test("deleteContainerGroupById should delete the correct container group", () => {
-    const result = deleteContainerGroupById(groups, 2);
-    expect(result).toEqual([
-      {
-        id: 0,
-        type: ContainerType.MAIN,
-        baseStyles: {},
-        customStyles: "",
-        control: { type: "control" },
-        containers: [
-          {
-            id: 1,
-            type: ContainerType.CONTAINER,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [],
-          },
-        ],
-      },
-    ]);
+    const result = deleteContainerGroupById(containerGroup, 2);
+    expect(result).toEqual({
+      id: 0,
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["main-container"],
+      control: { type: "control" },
+      containers: [
+        {
+          id: 1,
+          baseStyles: { backgroundColor: "white" },
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [],
+        },
+      ],
+    });
   });
 
   test("updateContainerGroupPropertyById should update the correct property", () => {
-    const result = updateContainerGroupPropertyById(groups, 2, "baseStyles", {
-      backgroundColor: "red",
-    });
-    expect(result).toEqual([
+    const result = updateContainerGroupPropertyById(
+      containerGroup,
+      3,
+      "baseStyles",
       {
-        id: 0,
-        type: ContainerType.MAIN,
-        baseStyles: {},
-        customStyles: "",
-        control: { type: "control" },
-        containers: [
-          {
-            id: 1,
-            type: ContainerType.CONTAINER,
-            baseStyles: {},
-            customStyles: "",
-            control: { type: "control" },
-            containers: [],
-          },
-          {
-            id: 2,
-            type: ContainerType.ITEM,
-            baseStyles: {
-              backgroundColor: "red",
-            },
-            customStyles: "",
-            control: { type: "control" },
-            containers: [
-              {
-                id: 3,
-                type: ContainerType.ITEM,
-                baseStyles: {},
-                customStyles: "",
-                control: { type: "control" },
-                containers: [],
+        backgroundColor: "red",
+      }
+    );
+    expect(result).toEqual({
+      id: 0,
+      baseStyles: { backgroundColor: "white" },
+      customStyles: {},
+      baseClasses: ["main-container"],
+      control: { type: "control" },
+      containers: [
+        {
+          id: 1,
+          baseStyles: { backgroundColor: "white" },
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [],
+        },
+        {
+          id: 2,
+          baseStyles: PARENT_BACKGROUND,
+          customStyles: {},
+          baseClasses: ["container"],
+          control: { type: "control" },
+          containers: [
+            {
+              id: 3,
+              baseStyles: {
+                backgroundColor: "red",
               },
-            ],
-          },
-        ],
-      },
-    ]);
+              customStyles: {},
+              baseClasses: ["container"],
+              control: { type: "control" },
+              containers: [],
+            },
+          ],
+        },
+      ],
+    });
   });
 });

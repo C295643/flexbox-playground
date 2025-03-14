@@ -1,5 +1,4 @@
 import { ContainerGroup } from "@/app/page";
-import { ContainerType } from "@/types/Container";
 import React from "react";
 import { Offcanvas } from "react-bootstrap";
 
@@ -34,7 +33,6 @@ const CustomOffcanvas: React.FC<CustomOffcanvasProps> = ({
         </Offcanvas.Header>
         <Offcanvas.Body>
           <p>The containerGroup id is: {containerGroup.id}</p>
-          <p>The containerGroup type is: {containerGroup.type}</p>
           <button
             onClick={() => handleAddContainerGroup(containerGroup.id)}
             className="btn btn-primary"

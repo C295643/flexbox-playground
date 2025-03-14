@@ -1,35 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ContainerResetClass, ContainerType } from "@/types/Container";
 import styles from "./Container.module.css";
 import { ContainerGroup } from "@/app/page";
 
 type ContainerProps = {
   children: React.ReactNode;
-  containerGroup:ContainerGroup
+  containerGroup: ContainerGroup;
   handleShowOffcanvas: (index: number) => void;
-};
-
-const applyCustomStyles = (styleString: string): Record<string, string> => {
-  try {
-    const styleObject: Record<string, string> = {};
-    styleString.split(";").forEach((style) => {
-      const [property, value] = style.split(":").map((s) => s.trim());
-      if (property && value) {
-        styleObject[property] = value;
-      }
-    });
-    return styleObject;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.log(
-        "An error occurred trying to create the styleObject in applyCustomStyles: ",
-        error.message
-      );
-    } else {
-      console.log("An unexpected error occurred in applyCustomStyles: ", error);
-    }
-    return {};
-  }
 };
 
 const Container: React.FC<ContainerProps> = ({
@@ -37,11 +13,7 @@ const Container: React.FC<ContainerProps> = ({
   containerGroup,
   handleShowOffcanvas,
 }: ContainerProps) => {
-  const { id, type, baseStyles, customStyles } = containerGroup;
-  console.log("--------------- baseStyles: ", baseStyles);
-  const isContainer = type === ContainerType.CONTAINER;
-  const isItem = type === ContainerType.ITEM;
-  const containerResetClass = ContainerResetClass[type];
+  const { id, baseStyles, customStyles, baseClasses } = containerGroup;
 
   const [doubleClicked, setDoubleClicked] = useState(false);
   const [rightClicked, setRightClicked] = useState(false);
@@ -57,7 +29,6 @@ const Container: React.FC<ContainerProps> = ({
   const handleContextMenu = (e: React.MouseEvent, groupId: number) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("--------------- Right-click detected, groupId: ", groupId);
     setRightClicked(!rightClicked);
     handleShowOffcanvas(groupId);
   };
@@ -65,19 +36,24 @@ const Container: React.FC<ContainerProps> = ({
   useEffect(() => {
     setCombinedStyles({
       ...baseStyles,
-      ...applyCustomStyles(customStyles),
+      ...customStyles,
     });
   }, [baseStyles, customStyles]);
 
+  // Consider moving this to a utility function
+  function splitClasses(classes: string[]): string {
+    const classesString = classes.map((c) => styles[c]).join(" ");
+    return classesString;
+  }
+
   return (
     <div
-      className={`${styles[containerResetClass]} global-container`}
+      className={`${splitClasses(baseClasses)} global-container`}
       style={combinedStyles}
       onDoubleClick={(e) => handleDoubleClick(e, id)}
       onContextMenu={(e) => handleContextMenu(e, id)}
     >
-      <p>{isContainer && `Container ${id}`}</p>
-      <p>{isItem && `Item ${id}`}</p>
+      <p>Container {id}</p>
       {children}
     </div>
   );

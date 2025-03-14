@@ -1,5 +1,4 @@
-/* reset styles */
-.container-main {
+.main-container {
   font-size: 18px;
   flex: 1;
   border-radius: 8px;
@@ -9,28 +8,11 @@
   padding: 8px;
 }
 
-.item {
+.container {
   font-size: 18px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-
-  padding: 8px;
-  margin: 8px;
-  
-  border: dashed 2px blue;
-}
-.item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.container {
-  font-size: 18px;
-  border-radius: 8px;
-  background-color: lightgray;
-  border: dashed 2px red;
-
   padding: 8px;
   margin: 8px;
 }
@@ -38,4 +20,3 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
-/* ------------- */

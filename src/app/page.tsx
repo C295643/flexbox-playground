@@ -5,23 +5,29 @@ import Container from "@/components/Container";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
 import { StyleDisplay } from "@/components/StyleDisplay";
-import { ContainerType } from "@/types/Container";
 import { useNextId } from "@/hooks/useNextId";
 import { usePrevious } from "@/hooks/usePrevious";
 import {
   findContainerGroupById,
   addContainerGroupById,
   deleteContainerGroupById,
+  compareContainerGroups,
 } from "@/utils/containerUtils";
 import styles from "./page.module.css";
 import { generateRandomColor } from "@/utils/helpers";
 import WrapperContainer from "@/components/WrapperContainer";
+import { useStateWithDeepClone } from "@/hooks/useStateWithDeepClone";
+import {
+  CONTAINER_BORDER,
+  ITEM_BORDER,
+  MAIN_CONTAINER_BORDER,
+} from "@/constants";
 
 export type ContainerGroup = {
   id: number;
-  type: ContainerType;
   baseStyles: React.CSSProperties;
-  customStyles: string;
+  customStyles: React.CSSProperties;
+  baseClasses: string[];
   control: {
     type: string;
   };
@@ -31,23 +37,23 @@ export type ContainerGroup = {
 // Initial container group definition
 const containerGroupInit: ContainerGroup = {
   id: 0,
-  type: ContainerType.MAIN,
-  customStyles: "",
-  baseStyles: {},
+  baseStyles: { backgroundColor: "white", ...MAIN_CONTAINER_BORDER },
+  customStyles: {},
+  baseClasses: ["main-container"],
   control: { type: "control" },
   containers: [
     {
       id: 1,
-      type: ContainerType.CONTAINER,
-      customStyles: "",
-      baseStyles: {},
+      baseStyles: { backgroundColor: "white", ...CONTAINER_BORDER },
+      customStyles: {},
+      baseClasses: ["container"],
       control: { type: "control" },
       containers: [
         {
           id: 2,
-          type: ContainerType.ITEM,
-          customStyles: "",
-          baseStyles: generateRandomColor(),
+          baseStyles: { ...generateRandomColor(), ...ITEM_BORDER },
+          customStyles: {},
+          baseClasses: ["container"],
           control: { type: "control" },
           containers: [],
         },
@@ -75,12 +81,24 @@ export default function Home() {
   const [offcanvasContainerGroup, setOffcanvasContainerGroup] = useState<
     ContainerGroup | undefined
   >(undefined);
+  const [containerGroup, setContainerGroup, clonedContainerGroup] =
+    useStateWithDeepClone<ContainerGroup>(containerGroupInit);
 
-  console.log("--------------- containerGroupInit: ", containerGroupInit);
-  const [containerGroup, setContainerGroup] = useState<ContainerGroup[]>([
-    containerGroupInit,
-  ]);
+  // Custom hook to get the containerGroup in its previous state
   const prevContainerGroup = usePrevious(containerGroup);
+  // console.log("--------------- prevContainerGroup: ", prevContainerGroup);
+
+  const createContainerGroup = (): ContainerGroup => {
+    const newContainerGroup: ContainerGroup = {
+      id: getNextId(),
+      baseStyles: { ...generateRandomColor(), ...ITEM_BORDER },
+      customStyles: {},
+      baseClasses: ["container"],
+      control: { type: "new control" },
+      containers: [],
+    };
+    return newContainerGroup;
+  };
 
   const creatContainer = (group: ContainerGroup): React.ReactNode => {
     return (
@@ -98,34 +116,23 @@ export default function Home() {
 
   useEffect(() => {
     if (prevContainerGroup) {
-      containerGroup.forEach((group, index) => {
-        if (group !== prevContainerGroup[index]) {
-          console.log(
-            `---------- Container group at index ${index} has changed`
-          );
-          // Run your process here
-          console.log("--------------- containerGroup: ", containerGroup);
-        }
-      });
+      if (!compareContainerGroups(containerGroup, prevContainerGroup)) {
+        // console.log(
+        //   `---------- Container group id=${containerGroup.id} has changed`
+        // );
+        // Run your process here
+        // console.log("--------------- containerGroup: ", containerGroup);
+      }
     }
   }, [containerGroup, prevContainerGroup]);
 
   const handleAddContainerGroup = (groupId: number) => {
-    const newContainerGroup: ContainerGroup = {
-      id: getNextId(),
-      type: ContainerType.ITEM,
-      customStyles: "",
-      baseStyles: generateRandomColor(),
-      control: { type: "new control" },
-      containers: [],
-    };
-
+    const newContainerGroup: ContainerGroup = createContainerGroup();
     const updatedContainerGroup = addContainerGroupById(
-      containerGroup,
+      clonedContainerGroup,
       groupId,
       newContainerGroup
     );
-
     if (updatedContainerGroup) {
       setContainerGroup(updatedContainerGroup);
     } else {
@@ -136,7 +143,7 @@ export default function Home() {
 
   const handleDeleteContainerGroup = (groupId: number) => {
     const updatedContainerGroup = deleteContainerGroupById(
-      containerGroup,
+      clonedContainerGroup,
       groupId
     );
 

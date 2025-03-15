@@ -1,3 +1,4 @@
+import { MAIN_CONTAINER, PARENT_CONTAINER } from "@/constants";
 import {
   findContainerGroupById,
   findParentContainerGroupById,
@@ -6,7 +7,6 @@ import {
   updateContainerGroupPropertyById,
 } from "../containerUtils";
 import { ContainerGroup } from "@/app/page";
-import { CONTAINER_BORDER, PARENT_BACKGROUND } from "@/constants";
 
 describe("containerUtils", () => {
   let containerGroup: ContainerGroup;
@@ -14,7 +14,7 @@ describe("containerUtils", () => {
   beforeEach(() => {
     containerGroup = {
       id: 0,
-      baseStyles: { backgroundColor: "white" },
+      baseStyles: MAIN_CONTAINER,
       customStyles: {},
       baseClasses: ["main-container"],
       control: { type: "control" },
@@ -29,7 +29,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
+          baseStyles: PARENT_CONTAINER,
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },
@@ -64,7 +64,7 @@ describe("containerUtils", () => {
     const result = findParentContainerGroupById(containerGroup, 3);
     expect(result).toEqual({
       id: 2,
-      baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
+      baseStyles: PARENT_CONTAINER,
       customStyles: {},
       baseClasses: ["container"],
       control: { type: "control" },
@@ -93,7 +93,7 @@ describe("containerUtils", () => {
     const result = addContainerGroupById(containerGroup, 2, newGroup);
     expect(result).toEqual({
       id: 0,
-      baseStyles: { backgroundColor: "white" },
+      baseStyles: MAIN_CONTAINER,
       customStyles: {},
       baseClasses: ["main-container"],
       control: { type: "control" },
@@ -108,7 +108,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: { ...PARENT_BACKGROUND, ...CONTAINER_BORDER },
+          baseStyles: PARENT_CONTAINER,
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },
@@ -139,7 +139,7 @@ describe("containerUtils", () => {
     const result = deleteContainerGroupById(containerGroup, 2);
     expect(result).toEqual({
       id: 0,
-      baseStyles: { backgroundColor: "white" },
+      baseStyles: MAIN_CONTAINER,
       customStyles: {},
       baseClasses: ["main-container"],
       control: { type: "control" },
@@ -167,7 +167,7 @@ describe("containerUtils", () => {
     );
     expect(result).toEqual({
       id: 0,
-      baseStyles: { backgroundColor: "white" },
+      baseStyles: MAIN_CONTAINER,
       customStyles: {},
       baseClasses: ["main-container"],
       control: { type: "control" },
@@ -182,7 +182,7 @@ describe("containerUtils", () => {
         },
         {
           id: 2,
-          baseStyles: {...PARENT_BACKGROUND, ...CONTAINER_BORDER},
+          baseStyles: PARENT_CONTAINER,
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },

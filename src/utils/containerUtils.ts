@@ -1,5 +1,5 @@
 import { ContainerGroup } from "@/app/page";
-import { CONTAINER_BORDER, PARENT_BACKGROUND } from "@/constants";
+import { ITEM_CONTAINER, PARENT_CONTAINER } from "@/constants";
 import { generateRandomColor } from "./helpers";
 
 /**
@@ -104,8 +104,7 @@ export const addContainerGroupById = (
     if (containerGroup.id !== 0) {
       containerGroup.baseStyles = {
         ...containerGroup.baseStyles,
-        ...PARENT_BACKGROUND,
-        ...CONTAINER_BORDER,
+        ...PARENT_CONTAINER,
       };
     }
     return containerGroup;
@@ -136,7 +135,10 @@ export const deleteContainerGroupById = (
   if (index !== -1) {
     containerGroup.containers.splice(index, 1);
     if (containerGroup.containers.length === 0 && containerGroup.id !== 0) {
-      containerGroup.baseStyles = generateRandomColor();
+      containerGroup.baseStyles = {
+        ...generateRandomColor(),
+        ...ITEM_CONTAINER,
+      };
     }
     return containerGroup;
   }
@@ -185,8 +187,8 @@ export const updateContainerGroupPropertyById = <
       value
     );
     if (updated) {
-      containerGroupClone.containers = containerGroupClone.containers.map((element) =>
-        element.id === updated.id ? updated : element
+      containerGroupClone.containers = containerGroupClone.containers.map(
+        (element) => (element.id === updated.id ? updated : element)
       );
       return containerGroupClone;
     }

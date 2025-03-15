@@ -1,4 +1,9 @@
-export const PARENT_BACKGROUND = { backgroundColor: "lightgray" }; // #D3D3D3
-export const MAIN_CONTAINER_BORDER = { border: "dashed 4px red" };
-export const CONTAINER_BORDER = { border: "dashed 4px blue" };
-export const ITEM_BORDER = { border: "dashed 4px fuchsia" };
+export const MAIN_CONTAINER = {
+  border: "dashed 2px red",
+  backgroundColor: "white",
+};
+export const PARENT_CONTAINER = {
+  backgroundColor: "lightgray",
+  border: "dashed 2px blue",
+}; // #D3D3D3
+export const ITEM_CONTAINER = { border: "dashed 2px fuchsia" };

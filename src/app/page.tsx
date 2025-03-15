@@ -17,11 +17,7 @@ import styles from "./page.module.css";
 import { generateRandomColor } from "@/utils/helpers";
 import WrapperContainer from "@/components/WrapperContainer";
 import { useStateWithDeepClone } from "@/hooks/useStateWithDeepClone";
-import {
-  CONTAINER_BORDER,
-  ITEM_BORDER,
-  MAIN_CONTAINER_BORDER,
-} from "@/constants";
+import { ITEM_CONTAINER, MAIN_CONTAINER, PARENT_CONTAINER } from "@/constants";
 
 export type ContainerGroup = {
   id: number;
@@ -37,21 +33,21 @@ export type ContainerGroup = {
 // Initial container group definition
 const containerGroupInit: ContainerGroup = {
   id: 0,
-  baseStyles: { backgroundColor: "white", ...MAIN_CONTAINER_BORDER },
+  baseStyles: MAIN_CONTAINER ,
   customStyles: {},
   baseClasses: ["main-container"],
   control: { type: "control" },
   containers: [
     {
       id: 1,
-      baseStyles: { backgroundColor: "white", ...CONTAINER_BORDER },
+      baseStyles: PARENT_CONTAINER ,
       customStyles: {},
       baseClasses: ["container"],
       control: { type: "control" },
       containers: [
         {
           id: 2,
-          baseStyles: { ...generateRandomColor(), ...ITEM_BORDER },
+          baseStyles: { ...generateRandomColor(), ...ITEM_CONTAINER },
           customStyles: {},
           baseClasses: ["container"],
           control: { type: "control" },
@@ -91,7 +87,7 @@ export default function Home() {
   const createContainerGroup = (): ContainerGroup => {
     const newContainerGroup: ContainerGroup = {
       id: getNextId(),
-      baseStyles: { ...generateRandomColor(), ...ITEM_BORDER },
+      baseStyles: { ...generateRandomColor(), ...ITEM_CONTAINER },
       customStyles: {},
       baseClasses: ["container"],
       control: { type: "new control" },

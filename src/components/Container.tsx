@@ -5,31 +5,34 @@ import { ContainerGroup } from "@/app/page";
 type ContainerProps = {
   children: React.ReactNode;
   containerGroup: ContainerGroup;
+  handleShowModal: (index: number) => void;
   handleShowOffcanvas: (index: number) => void;
 };
 
 const Container: React.FC<ContainerProps> = ({
   children,
   containerGroup,
+  handleShowModal,
   handleShowOffcanvas,
 }: ContainerProps) => {
   const { id, baseStyles, customStyles, baseClasses } = containerGroup;
-
-  const [doubleClicked, setDoubleClicked] = useState(false);
-  const [rightClicked, setRightClicked] = useState(false);
   const [combinedStyles, setCombinedStyles] = useState<React.CSSProperties>({});
+
+  const handleClick = (e: React.MouseEvent, groupId: number) => {
+    e.stopPropagation();
+    console.log("--------------- Clicked, groupId: ", groupId);
+    handleShowModal(groupId);
+  };
 
   const handleDoubleClick = (e: React.MouseEvent, groupId: number) => {
     e.stopPropagation();
     console.log("--------------- doubleClicked, groupId: ", groupId);
-    setDoubleClicked(!doubleClicked);
   };
 
   // Handle right-click (contextual menu) event
   const handleContextMenu = (e: React.MouseEvent, groupId: number) => {
     e.preventDefault();
     e.stopPropagation();
-    setRightClicked(!rightClicked);
     handleShowOffcanvas(groupId);
   };
 
@@ -50,6 +53,7 @@ const Container: React.FC<ContainerProps> = ({
     <div
       className={`${splitClasses(baseClasses)} global-container`}
       style={combinedStyles}
+      onClick={(e) => handleClick(e, id)}
       onDoubleClick={(e) => handleDoubleClick(e, id)}
       onContextMenu={(e) => handleContextMenu(e, id)}
     >

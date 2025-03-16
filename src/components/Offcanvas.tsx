@@ -37,7 +37,7 @@ const CustomOffcanvas: React.FC<CustomOffcanvasProps> = ({
             onClick={() => handleAddContainerGroup(containerGroup.id)}
             className="btn btn-primary"
           >
-            Add Item
+            Add Container Group
           </button>
           <button
             onClick={() => handleDeleteContainerGroup(containerGroup.id)}

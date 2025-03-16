@@ -69,9 +69,9 @@ export default function Home() {
   const [item3Style, setItem3Style] = useState("");
 
   const [showModal, setShowModal] = useState(false);
-
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+  const [modalContainerGroup, setModalContainerGroup] = useState<
+    ContainerGroup | undefined
+  >(undefined);
 
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [offcanvasContainerGroup, setOffcanvasContainerGroup] = useState<
@@ -101,6 +101,7 @@ export default function Home() {
       <Container
         key={group.id}
         containerGroup={group}
+        handleShowModal={handleShowModal}
         handleShowOffcanvas={handleShowOffcanvas}
       >
         {group.containers.map((containerGroup) =>
@@ -131,6 +132,7 @@ export default function Home() {
     );
     if (updatedContainerGroup) {
       setContainerGroup(updatedContainerGroup);
+      handleCloseModal();
     } else {
       console.warn("⚠️ Container group not added");
       return;
@@ -145,12 +147,24 @@ export default function Home() {
 
     if (updatedContainerGroup) {
       setContainerGroup(updatedContainerGroup);
+      handleCloseModal();
     } else {
       console.warn("⚠️ Container group not deleted");
     }
 
     handleCloseOffcanvas();
   };
+
+  const handleShowModal = (index: number) => {
+    const containerGroupFound = findContainerGroupById(containerGroup, index);
+    if (containerGroupFound) {
+      setModalContainerGroup(containerGroupFound);
+      setShowModal(true);
+    } else {
+      console.warn("⚠️ Container group not found");
+    }
+  };
+  const handleCloseModal = () => setShowModal(false);
 
   const handleShowOffcanvas = (index: number) => {
     const containerGroupFound = findContainerGroupById(containerGroup, index);
@@ -223,7 +237,9 @@ export default function Home() {
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}
-        index={0} // Assuming the index of initialContainerGroup is 0
+        containerGroup={modalContainerGroup}
+        handleAddContainerGroup={handleAddContainerGroup}
+        handleDeleteContainerGroup={handleDeleteContainerGroup}
       />
       <CustomOffcanvas
         show={showOffcanvas}

@@ -7,6 +7,7 @@ import { ContainerGroup } from "@/app/page";
 type WrapperContainerProps = {
   containerGroup: ContainerGroup;
   creatContainer: (group: ContainerGroup) => React.ReactNode;
+  setActiveContainer: (containerGroup: ContainerGroup) => void;
   handleShowModal: (index: number) => void;
   handleShowOffcanvas: (index: number) => void;
 };
@@ -14,21 +15,22 @@ type WrapperContainerProps = {
 export default function WrapperContainer({
   containerGroup,
   creatContainer,
+  setActiveContainer,
   handleShowModal,
   handleShowOffcanvas,
 }: WrapperContainerProps) {
   return (
-    <div className={`${styles.wrapperContainer} p-4`}>
-      <div className={`${styles.infoContainer} col-12 p-3`}>
+    <div className={`${styles.wrapperContainer} p-4`} style={{ border: 'solid 4px red' }}>
+      {/* <div className={`${styles.infoContainer} col-12 p-3`} style={{ border: 'solid 4px blue' }}>
         Info container
-      </div>
+      </div> */}
       <Container
         key={containerGroup.id}
         containerGroup={containerGroup}
+        setActiveContainer={setActiveContainer}
         handleShowModal={handleShowModal}
         handleShowOffcanvas={handleShowOffcanvas}
       >
-        <p>Main Container</p>
         {containerGroup.containers.map((group) => creatContainer(group))}
       </Container>
     </div>

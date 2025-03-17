@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
-import { StyleDisplay } from "@/components/StyleDisplay";
 import { useNextId } from "@/hooks/useNextId";
 import { usePrevious } from "@/hooks/usePrevious";
 import {
@@ -18,6 +17,7 @@ import { generateRandomColor } from "@/utils/helpers";
 import WrapperContainer from "@/components/WrapperContainer";
 import { useStateWithDeepClone } from "@/hooks/useStateWithDeepClone";
 import { ITEM_CONTAINER, MAIN_CONTAINER, PARENT_CONTAINER } from "@/constants";
+import Toolbar from "@/components/Toolbar";
 
 export type ContainerGroup = {
   id: number;
@@ -33,14 +33,14 @@ export type ContainerGroup = {
 // Initial container group definition
 const containerGroupInit: ContainerGroup = {
   id: 0,
-  baseStyles: MAIN_CONTAINER ,
+  baseStyles: MAIN_CONTAINER,
   customStyles: {},
   baseClasses: ["main-container"],
   control: { type: "control" },
   containers: [
     {
       id: 1,
-      baseStyles: PARENT_CONTAINER ,
+      baseStyles: PARENT_CONTAINER,
       customStyles: {},
       baseClasses: ["container"],
       control: { type: "control" },
@@ -63,11 +63,6 @@ export default function Home() {
   // Custom hook to get the getNextId function
   const getNextId = useNextId(INITIAL_VALUE);
 
-  const [containerStyle, setContainerStyle] = useState("");
-  const [item1Style, setItem1Style] = useState("");
-  const [item2Style, setItem2Style] = useState("");
-  const [item3Style, setItem3Style] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const [modalContainerGroup, setModalContainerGroup] = useState<
     ContainerGroup | undefined
@@ -79,6 +74,7 @@ export default function Home() {
   >(undefined);
   const [containerGroup, setContainerGroup, clonedContainerGroup] =
     useStateWithDeepClone<ContainerGroup>(containerGroupInit);
+  const [activeContainer, setActiveContainer] = useState<ContainerGroup>(containerGroup);
 
   // Custom hook to get the containerGroup in its previous state
   const prevContainerGroup = usePrevious(containerGroup);
@@ -101,6 +97,7 @@ export default function Home() {
       <Container
         key={group.id}
         containerGroup={group}
+        setActiveContainer={setActiveContainer}
         handleShowModal={handleShowModal}
         handleShowOffcanvas={handleShowOffcanvas}
       >
@@ -110,6 +107,10 @@ export default function Home() {
       </Container>
     );
   };
+
+  useEffect(() => {
+    console.log("--------------- activeContainer: ", activeContainer);
+  }, [activeContainer]);
 
   useEffect(() => {
     if (prevContainerGroup) {
@@ -159,7 +160,7 @@ export default function Home() {
     const containerGroupFound = findContainerGroupById(containerGroup, index);
     if (containerGroupFound) {
       setModalContainerGroup(containerGroupFound);
-      setShowModal(true);
+      // setShowModal(true);
     } else {
       console.warn("⚠️ Container group not found");
     }
@@ -181,59 +182,16 @@ export default function Home() {
     <main className={`${styles.mainContainer} p-3 container`}>
       <WrapperContainer
         containerGroup={containerGroup} // Pass the containerGroup state to the WrapperContainer component
+        setActiveContainer={setActiveContainer}
         handleShowModal={handleShowModal}
         handleShowOffcanvas={handleShowOffcanvas}
         creatContainer={creatContainer}
       />
-
-      <div
-        className={`${styles.controls} col-12`}
-        style={{ border: "dashed 4px fuchsia" }}
-      >
-        <div id="control-group-1" className={`${styles.controlGroup} mb-3`}>
-          <label htmlFor="container-style">Container Styles:</label>
-          <textarea
-            id="container-style"
-            value={containerStyle}
-            onChange={(e) => setContainerStyle(e.target.value)}
-            placeholder="Example: justify-content: space-between; align-items: center;"
-          />
-          <StyleDisplay inputStyles={containerStyle} />
-        </div>
-
-        <div id="control-group-2" className={`${styles.controlGroup} mb-3`}>
-          <label htmlFor="item1-style">Item 1 Styles:</label>
-          <textarea
-            id="item1-style"
-            value={item1Style}
-            onChange={(e) => setItem1Style(e.target.value)}
-            placeholder="Example: background-color: #ff0000; color: white;"
-          />
-          <StyleDisplay inputStyles={item1Style} />
-        </div>
-
-        <div id="control-group-3" className={`${styles.controlGroup} mb-3`}>
-          <label htmlFor="item2-style">Item 2 Styles:</label>
-          <textarea
-            id="item2-style"
-            value={item2Style}
-            onChange={(e) => setItem2Style(e.target.value)}
-            placeholder="Example: background-color: #00ff00; color: white;"
-          />
-          <StyleDisplay inputStyles={item2Style} />
-        </div>
-
-        <div id="control-group-4" className={`${styles.controlGroup} mb-3`}>
-          <label htmlFor="item3-style">Item 3 Styles:</label>
-          <textarea
-            id="item3-style"
-            value={item3Style}
-            onChange={(e) => setItem3Style(e.target.value)}
-            placeholder="Example: background-color: #0000ff; color: white;"
-          />
-          <StyleDisplay inputStyles={item3Style} />
-        </div>
-      </div>
+      <Toolbar
+        containerGroup={activeContainer}
+        handleAddContainerGroup={handleAddContainerGroup}
+        handleDeleteContainerGroup={handleDeleteContainerGroup}
+      />
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}

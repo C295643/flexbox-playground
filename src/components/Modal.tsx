@@ -10,13 +10,13 @@ interface CustomModalProps {
   handleDeleteContainerGroup: (groupId: number) => void;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({
+const CustomModal = ({
   show,
   containerGroup,
   handleClose,
   handleAddContainerGroup,
   handleDeleteContainerGroup,
-}) => {
+}: CustomModalProps) => {
   if (containerGroup === undefined) {
     return null;
   }

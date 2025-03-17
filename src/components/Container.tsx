@@ -5,6 +5,7 @@ import { ContainerGroup } from "@/app/page";
 type ContainerProps = {
   children: React.ReactNode;
   containerGroup: ContainerGroup;
+  setActiveContainer: (containerGroup: ContainerGroup) => void;
   handleShowModal: (index: number) => void;
   handleShowOffcanvas: (index: number) => void;
 };
@@ -12,6 +13,7 @@ type ContainerProps = {
 const Container: React.FC<ContainerProps> = ({
   children,
   containerGroup,
+  setActiveContainer,
   handleShowModal,
   handleShowOffcanvas,
 }: ContainerProps) => {
@@ -21,6 +23,7 @@ const Container: React.FC<ContainerProps> = ({
   const handleClick = (e: React.MouseEvent, groupId: number) => {
     e.stopPropagation();
     console.log("--------------- Clicked, groupId: ", groupId);
+    setActiveContainer(containerGroup);
     handleShowModal(groupId);
   };
 

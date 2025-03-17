@@ -1,0 +1,12 @@
+.toolbarContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+
+  border: solid 4px red;
+}
+
+.header {
+  border: dashed 4px blue;
+}

@@ -1,7 +1,7 @@
 .wrapperContainer {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  flex: 4;
   gap: 10px;
 
   border: dashed 4px blue;

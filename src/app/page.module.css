@@ -6,18 +6,6 @@
   border: dashed 4px green;
 }
 
-.wrapperContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  border: dashed 4px blue;
-}
-.infoContainer {
-  border: dashed 4px orange;
-}
-
 .controls {
   width: 300px;
   padding: 20px;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Container from "@/components/Container";
+import Container from "@/components/Container/Container";
 import CustomModal from "@/components/Modal";
 import CustomOffcanvas from "@/components/Offcanvas";
 import { useNextId } from "@/hooks/useNextId";
@@ -12,12 +12,12 @@ import {
   deleteContainerGroupById,
   compareContainerGroups,
 } from "@/utils/containerUtils";
-import styles from "./page.module.css";
 import { generateRandomColor } from "@/utils/helpers";
-import WrapperContainer from "@/components/WrapperContainer";
+import WrapperContainer from "@/components/WrapperContainer/WrapperContainer";
 import { useStateWithDeepClone } from "@/hooks/useStateWithDeepClone";
 import { ITEM_CONTAINER, MAIN_CONTAINER, PARENT_CONTAINER } from "@/constants";
-import Toolbar from "@/components/Toolbar";
+import Toolbar from "@/components/Toolbar/Toolbar";
+import styles from "./page.module.css";
 
 export type ContainerGroup = {
   id: number;
@@ -74,7 +74,8 @@ export default function Home() {
   >(undefined);
   const [containerGroup, setContainerGroup, clonedContainerGroup] =
     useStateWithDeepClone<ContainerGroup>(containerGroupInit);
-  const [activeContainer, setActiveContainer] = useState<ContainerGroup>(containerGroup);
+  const [activeContainer, setActiveContainer] =
+    useState<ContainerGroup>(containerGroup);
 
   // Custom hook to get the containerGroup in its previous state
   const prevContainerGroup = usePrevious(containerGroup);

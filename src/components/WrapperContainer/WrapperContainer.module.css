@@ -4,9 +4,9 @@
   flex: 4;
   gap: 10px;
 
-  border: dashed 4px blue;
+  border: solid 2px blue;
 }
 
 .infoContainer {
-  border: dashed 4px orange;
+  border: solid 2px orange;
 }

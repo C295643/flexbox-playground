@@ -1,6 +1,6 @@
 "use client";
 
-import Container from "@/components/Container";
+import Container from "@/components/Container/Container";
 import styles from "./WrapperContainer.module.css";
 import { ContainerGroup } from "@/app/page";
 
@@ -20,7 +20,9 @@ export default function WrapperContainer({
   handleShowOffcanvas,
 }: WrapperContainerProps) {
   return (
-    <div className={`${styles.wrapperContainer} p-4`} style={{ border: 'solid 4px red' }}>
+    <div className={`${styles.wrapperContainer} p-4`} 
+    // style={{ border: 'solid 4px red' }}
+    >
       {/* <div className={`${styles.infoContainer} col-12 p-3`} style={{ border: 'solid 4px blue' }}>
         Info container
       </div> */}

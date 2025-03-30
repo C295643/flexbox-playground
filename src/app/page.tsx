@@ -11,6 +11,7 @@ import {
   addContainerGroupById,
   deleteContainerGroupById,
   compareContainerGroups,
+  findNextValidContainerGroup,
 } from "@/utils/containerUtils";
 import { generateRandomColor } from "@/utils/helpers";
 import WrapperContainer from "@/components/WrapperContainer/WrapperContainer";
@@ -18,6 +19,8 @@ import { useStateWithDeepClone } from "@/hooks/useStateWithDeepClone";
 import { ITEM_CONTAINER, MAIN_CONTAINER, PARENT_CONTAINER } from "@/constants";
 import Toolbar from "@/components/Toolbar/Toolbar";
 import styles from "./page.module.css";
+import ToolbarAddDelete from "@/components/Toolbar/ToolbarAddDelete";
+import ToolbarContainer from "@/components/Toolbar/ToolbarContainer";
 
 export type ContainerGroup = {
   id: number;
@@ -110,7 +113,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log("--------------- activeContainer: ", activeContainer);
+    // console.log("--------------- activeContainer: ", activeContainer);
   }, [activeContainer]);
 
   useEffect(() => {
@@ -140,6 +143,31 @@ export default function Home() {
       return;
     }
   };
+
+  useEffect(() => {
+    // Check if the containerGroup has changed
+    if (
+      prevContainerGroup &&
+      !compareContainerGroups(containerGroup, prevContainerGroup)
+    ) {
+      // Find the activeContainer by its id
+      const updatedActiveContainer = findContainerGroupById(
+        containerGroup,
+        activeContainer.id
+      );
+
+      if (updatedActiveContainer) {
+        setActiveContainer(updatedActiveContainer);
+      } else {
+        // Find the next valid containerGroup in descending order
+        const nextValidContainerGroup = findNextValidContainerGroup(
+          containerGroup,
+          activeContainer.id
+        );
+        setActiveContainer(nextValidContainerGroup);
+      }
+    }
+  }, [containerGroup, prevContainerGroup, activeContainer.id]);
 
   const handleDeleteContainerGroup = (groupId: number) => {
     const updatedContainerGroup = deleteContainerGroupById(
@@ -188,11 +216,17 @@ export default function Home() {
         handleShowOffcanvas={handleShowOffcanvas}
         creatContainer={creatContainer}
       />
-      <Toolbar
-        containerGroup={activeContainer}
-        handleAddContainerGroup={handleAddContainerGroup}
-        handleDeleteContainerGroup={handleDeleteContainerGroup}
-      />
+      <Toolbar containerGroup={activeContainer}>
+        <ToolbarAddDelete
+          containerGroup={activeContainer}
+          handleAddContainerGroup={handleAddContainerGroup}
+          handleDeleteContainerGroup={handleDeleteContainerGroup}
+        />
+        <ToolbarContainer
+          containerGroup={activeContainer}
+          handleAddContainerGroup={handleAddContainerGroup}
+        />
+      </Toolbar>
       <CustomModal
         show={showModal}
         handleClose={handleCloseModal}

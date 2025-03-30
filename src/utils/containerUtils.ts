@@ -289,3 +289,25 @@ export function compareContainerGroups(
   }
   return true;
 }
+
+export function findNextValidContainerGroup(
+  containerGroup: ContainerGroup,
+  currentId: number
+): ContainerGroup {
+  // Flatten the containerGroup tree into a list of all containerGroups
+  const flattenContainerGroups = (group: ContainerGroup): ContainerGroup[] => {
+    return [group, ...group.containers.flatMap(flattenContainerGroups)];
+  };
+  const allContainerGroups = flattenContainerGroups(containerGroup);
+
+  // Sort the containerGroups by id in descending order
+  const sortedContainerGroups = allContainerGroups.sort((a, b) => b.id - a.id);
+
+  // Find the next containerGroup with an id less than the currentId
+  const nextContainerGroup = sortedContainerGroups.find(
+    (group) => group.id < currentId
+  );
+
+  // If no valid containerGroup is found, return the root containerGroup (id = 0)
+  return nextContainerGroup || containerGroup;
+}
